@@ -132,7 +132,7 @@ class RowsEvent(BinLogEvent):
                     values[name] = self.__read_string(1, column)
             elif column.type == FIELD_TYPE.NEWDECIMAL:
                 values[name] = self.__read_new_decimal(column)
-            elif column.type == FIELD_TYPE.BLOB:
+            elif column.type in (FIELD_TYPE.TINY_BLOB, FIELD_TYPE.MEDIUM_BLOB, FIELD_TYPE.BLOB, FIELD_TYPE.LONG_BLOB):
                 values[name] = self.__read_string(column.length_size, column)
             elif column.type == FIELD_TYPE.DATETIME:
                 values[name] = self.__read_datetime()
@@ -170,14 +170,11 @@ class RowsEvent(BinLogEvent):
             elif column.type == FIELD_TYPE.BIT:
                 values[name] = self.__read_bit(column)
             elif column.type == FIELD_TYPE.GEOMETRY:
-                values[name] = self.packet.read_length_coded_pascal_string(
-                    column.length_size)
+                values[name] = self.__read_string(column.length_size, column)
             elif column.type == FIELD_TYPE.JSON:
                 values[name] = self.packet.read_binary_json(column.length_size)
             else:
-                raise NotImplementedError("Unknown MySQL column type: %d" %
-                                          (column.type))
-
+                raise NotImplementedError("Unknown MySQL column type: %d" % column.type)
             nullBitmapIndex += 1
 
         return values
@@ -214,6 +211,8 @@ class RowsEvent(BinLogEvent):
         string = self.packet.read_length_coded_pascal_string(size)
         if column.character_set_name is not None:
             string = string.decode(charset_to_encoding(column.character_set_name))
+        else:
+            string = '0x' + string.hex()
         return string
 
     def __read_bit(self, column):

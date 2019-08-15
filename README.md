@@ -60,3 +60,10 @@ class PyMySQLReplicationTestCase(base):
 
 python pymysqlreplication/tests/test_data_type.py
 ```
+
+## 安装
+```shell
+pip uninstall -y mysql-replication
+python setup.py build
+python setup.py install
+```
