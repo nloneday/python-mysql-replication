@@ -17,7 +17,6 @@ UNSIGNED_SHORT_LENGTH = 2
 UNSIGNED_INT24_LENGTH = 3
 UNSIGNED_INT64_LENGTH = 8
 
-
 JSONB_TYPE_SMALL_OBJECT = 0x0
 JSONB_TYPE_LARGE_OBJECT = 0x1
 JSONB_TYPE_SMALL_ARRAY = 0x2
@@ -79,7 +78,7 @@ class BinLogPacketWrapper(object):
         constants.WRITE_ROWS_EVENT_V2: row_event.WriteRowsEvent,
         constants.DELETE_ROWS_EVENT_V2: row_event.DeleteRowsEvent,
         constants.TABLE_MAP_EVENT: row_event.TableMapEvent,
-        #5.6 GTID enabled replication events
+        # 5.6 GTID enabled replication events
         constants.ANONYMOUS_GTID_LOG_EVENT: event.NotImplementedEvent,
         constants.PREVIOUS_GTIDS_LOG_EVENT: event.NotImplementedEvent
 
@@ -329,17 +328,17 @@ class BinLogPacketWrapper(object):
     def unpack_int24(self, n):
         try:
             return struct.unpack('B', n[0])[0] \
-                + (struct.unpack('B', n[1])[0] << 8) \
-                + (struct.unpack('B', n[2])[0] << 16)
+                   + (struct.unpack('B', n[1])[0] << 8) \
+                   + (struct.unpack('B', n[2])[0] << 16)
         except TypeError:
             return n[0] + (n[1] << 8) + (n[2] << 16)
 
     def unpack_int32(self, n):
         try:
             return struct.unpack('B', n[0])[0] \
-                + (struct.unpack('B', n[1])[0] << 8) \
-                + (struct.unpack('B', n[2])[0] << 16) \
-                + (struct.unpack('B', n[3])[0] << 24)
+                   + (struct.unpack('B', n[1])[0] << 8) \
+                   + (struct.unpack('B', n[2])[0] << 16) \
+                   + (struct.unpack('B', n[3])[0] << 24)
         except TypeError:
             return n[0] + (n[1] << 8) + (n[2] << 16) + (n[3] << 24)
 
@@ -418,18 +417,18 @@ class BinLogPacketWrapper(object):
         if large:
             key_offset_lengths = [(
                 self.read_uint32(),  # offset (we don't actually need that)
-                self.read_uint16()   # size of the key
-                ) for _ in range(elements)]
+                self.read_uint16()  # size of the key
+            ) for _ in range(elements)]
         else:
             key_offset_lengths = [(
                 self.read_uint16(),  # offset (we don't actually need that)
-                self.read_uint16()   # size of key
-                ) for _ in range(elements)]
+                self.read_uint16()  # size of key
+            ) for _ in range(elements)]
 
         value_type_inlined_lengths = [read_offset_or_inline(self, large)
                                       for _ in range(elements)]
 
-        keys = [self.read(x[1]) for x in key_offset_lengths]
+        keys = [self.read(x[1]).decode() for x in key_offset_lengths]
 
         out = {}
         for i in range(elements):
@@ -438,7 +437,7 @@ class BinLogPacketWrapper(object):
             else:
                 t = value_type_inlined_lengths[i][0]
                 data = self.read_binary_json_type(t, length)
-            out[keys[i]] = data
+            out[keys[i]] = isinstance(data, bytes) and data.decode() or data
 
         return out
 
@@ -462,4 +461,4 @@ class BinLogPacketWrapper(object):
                 return x[2]
             return self.read_binary_json_type(x[0], length)
 
-        return [_read(x) for x in values_type_offset_inline]
+        return [_read(x).decode() for x in values_type_offset_inline]
