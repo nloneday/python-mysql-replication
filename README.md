@@ -1,6 +1,5 @@
 ## 声明
-forked from [noplay/python-mysql-replication](https://github.com/noplay/python-mysql-replication)
-用于解析MySQL binlog存储并生成SQL，详见[nloneday/binlog-repository](https://github.com/nloneday/binlog-repository)
+forked from [noplay/python-mysql-replication](https://github.com/noplay/python-mysql-replication)，用于解析MySQL binlog存储并生成SQL，详见[nloneday/binlog-repository](https://github.com/nloneday/binlog-repository)
 
 ## 定制
 
