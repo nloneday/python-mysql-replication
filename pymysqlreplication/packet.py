@@ -461,4 +461,5 @@ class BinLogPacketWrapper(object):
                 return x[2]
             return self.read_binary_json_type(x[0], length)
 
-        return [_read(x).decode() for x in values_type_offset_inline]
+        bytes_array = [_read(x) for x in values_type_offset_inline]
+        return [isinstance(x, bytes) and x.decode() or x for x in bytes_array]
