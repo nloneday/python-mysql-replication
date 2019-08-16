@@ -28,7 +28,11 @@ forked from [noplay/python-mysql-replication](https://github.com/noplay/python-m
     ```
     {b"my_key": b"my_val", b"my_key2": b"my_val2"} --> {"my_key": "my_val", "my_key2": "my_val2"}
     ```
-    
+5. blob
+    - `python.bytes --> '0x' + python.bytes.hex()`
+    ```
+    GEOMETRY, TINY_BLOB, MEDIUM_BLOB, BLOB, LONG_BLOB
+    ```
 ## 测试
 
 1. 修改数据库连接信息
@@ -46,7 +50,7 @@ class PyMySQLReplicationTestCase(base):
         self.database = {
             "host": "localhost",
             "user": "root",
-            "passwd": "",
+            "passwd": "123456",
             "port": 3306,
             "use_unicode": True,
             "charset": "utf8",
