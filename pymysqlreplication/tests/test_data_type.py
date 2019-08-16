@@ -388,28 +388,28 @@ class TestDataType(base.PyMySQLReplicationTestCase):
         create_query = "CREATE TABLE test (test TINYBLOB, test2 TINYTEXT) CHARACTER SET latin1 COLLATE latin1_bin;"
         insert_query = "INSERT INTO test VALUES('Hello', 'World')"
         event = self.create_and_insert_value(create_query, insert_query)
-        self.assertEqual(event.rows[0]["values"]["test"], b'Hello')
+        self.assertEqual(event.rows[0]["values"]["test"], '0x' + b'Hello'.hex())
         self.assertEqual(event.rows[0]["values"]["test2"], 'World')
 
     def test_medium_blob(self):
         create_query = "CREATE TABLE test (test MEDIUMBLOB, test2 MEDIUMTEXT) CHARACTER SET latin1 COLLATE latin1_bin;"
         insert_query = "INSERT INTO test VALUES('Hello', 'World')"
         event = self.create_and_insert_value(create_query, insert_query)
-        self.assertEqual(event.rows[0]["values"]["test"], b'Hello')
+        self.assertEqual(event.rows[0]["values"]["test"], '0x' + b'Hello'.hex())
         self.assertEqual(event.rows[0]["values"]["test2"], 'World')
 
     def test_long_blob(self):
         create_query = "CREATE TABLE test (test LONGBLOB, test2 LONGTEXT) CHARACTER SET latin1 COLLATE latin1_bin;"
         insert_query = "INSERT INTO test VALUES('Hello', 'World')"
         event = self.create_and_insert_value(create_query, insert_query)
-        self.assertEqual(event.rows[0]["values"]["test"], b'Hello')
+        self.assertEqual(event.rows[0]["values"]["test"], '0x' + b'Hello'.hex())
         self.assertEqual(event.rows[0]["values"]["test2"], 'World')
 
     def test_blob(self):
         create_query = "CREATE TABLE test (test BLOB, test2 TEXT) CHARACTER SET latin1 COLLATE latin1_bin;"
         insert_query = "INSERT INTO test VALUES('Hello', 'World')"
         event = self.create_and_insert_value(create_query, insert_query)
-        self.assertEqual(event.rows[0]["values"]["test"], b'Hello')
+        self.assertEqual(event.rows[0]["values"]["test"], '0x' + b'Hello'.hex())
         self.assertEqual(event.rows[0]["values"]["test2"], 'World')
 
     def test_string(self):
@@ -423,7 +423,7 @@ class TestDataType(base.PyMySQLReplicationTestCase):
         insert_query = "INSERT INTO test VALUES(GeomFromText('POINT(1 1)'))"
         event = self.create_and_insert_value(create_query, insert_query)
         self.assertEqual(event.rows[0]["values"]["test"],
-                         b'\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?')
+                         '0x' + b'\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'.hex())
 
     def test_json(self):
         if not self.isMySQL57():

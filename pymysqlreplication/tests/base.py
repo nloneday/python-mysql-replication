@@ -25,7 +25,7 @@ class PyMySQLReplicationTestCase(base):
         self.database = {
             "host": "localhost",
             "user": "root",
-            "passwd": "",
+            "passwd": "123456",
             "port": 3306,
             "use_unicode": True,
             "charset": "utf8",
